@@ -1,0 +1,9 @@
+server:
+  port: 8180
+spring:
+  application:
+    name: receipt-service
+  r2dbc:
+    url: r2dbc:pool:postgresql://localhost:5432/receipt_db
+    username: receiptAdmin
+    password: receiptAdmin

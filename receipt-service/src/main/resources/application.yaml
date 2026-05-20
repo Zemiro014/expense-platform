@@ -7,3 +7,19 @@ spring:
     url: r2dbc:pool:postgresql://localhost:5433/receipt_db
     username: receiptAdmin
     password: receiptAdmin
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,traces
+  tracing:
+    export:
+      enabled: true
+    sampling:
+      probability: 1.0
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/traces

@@ -44,6 +44,10 @@ dependencies {
 	// === Documentação (Swagger / OpenAPI) ===
 	implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.5'
 
+	//	=== KAFKA
+	implementation 'org.springframework.kafka:spring-kafka'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+
 	// === Autocomplete de Propriedades no IDE ===
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 

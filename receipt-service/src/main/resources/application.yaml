@@ -12,10 +12,17 @@ spring:
     init:
       mode: always
       schema-locations: classpath:schema.sql
+  kafka:
+    bootstrap-servers: localhost:9094
   swagger-ui:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
+
+app:
+  kafka:
+    topics:
+      receipt-created: receipt-created
 
 management:
   endpoints:

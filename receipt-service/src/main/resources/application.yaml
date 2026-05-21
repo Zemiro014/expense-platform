@@ -1,5 +1,6 @@
 server:
   port: 8180
+
 spring:
   application:
     name: receipt-service
@@ -7,6 +8,14 @@ spring:
     url: r2dbc:pool:postgresql://localhost:5433/receipt_db
     username: receiptAdmin
     password: receiptAdmin
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
 
 management:
   endpoints:

@@ -1,3 +1,35 @@
+server:
+  port: 8181
+
 spring:
   application:
     name: validation_service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/expense_platform_db
+    username: devAdmin
+    password: devAdmin
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  kafka:
+    bootstrap-servers: localhost:9094
+    consumer:
+      group-id: validation-service-group-v2
+      auto-offset-reset: earliest
+
+app:
+  kafka:
+    topics:
+      receipt-created: receipt-created
+
+logging:
+  level:
+    org.springframework.kafka: DEBUG

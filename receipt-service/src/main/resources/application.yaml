@@ -5,9 +5,9 @@ spring:
   application:
     name: receipt-service
   r2dbc:
-    url: r2dbc:pool:postgresql://localhost:5433/receipt_db
-    username: receiptAdmin
-    password: receiptAdmin
+    url: r2dbc:postgresql://localhost:5433/expense_platform_db
+    username: devAdmin
+    password: devAdmin
   sql:
     init:
       mode: always

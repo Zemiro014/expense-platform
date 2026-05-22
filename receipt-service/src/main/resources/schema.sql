@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS receipts; -- Only in DEV MODE
+
 CREATE TABLE IF NOT EXISTS receipts (
     id UUID PRIMARY KEY,
     merchant VARCHAR(255) NOT NULL,

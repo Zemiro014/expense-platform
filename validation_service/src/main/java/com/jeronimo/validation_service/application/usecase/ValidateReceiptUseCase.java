@@ -20,8 +20,9 @@ public class ValidateReceiptUseCase {
     public void execute(ReceiptCreatedEvent event) {
         if (repository.existsByReceiptId(event.receiptId())) {
             log.info(
-                    "Receipt already validated. Skipping duplicated event. receiptId={}",
-                    event.receiptId()
+                    "Receipt already validated. Skipping duplicated event. receiptId={}, correlationId={}",
+                    event.receiptId(),
+                    event.correlationId()
             );
             return;
         }
@@ -36,10 +37,11 @@ public class ValidateReceiptUseCase {
         ReceiptValidation savedValidation = repository.save(validation);
 
         log.info(
-                "Receipt validated successfully. receiptId={}, status={}, reason={}",
+                "Receipt validated and saved successfully. receiptId={}, status={}, reason={}, correlationId={}",
                 savedValidation.getReceiptId(),
                 savedValidation.getStatus(),
-                savedValidation.getReason()
+                savedValidation.getReason(),
+                event.correlationId()
         );
 
         eventPublisher.publishValidated(

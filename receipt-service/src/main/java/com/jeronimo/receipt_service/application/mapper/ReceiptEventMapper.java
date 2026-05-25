@@ -7,13 +7,14 @@ public class ReceiptEventMapper {
     private ReceiptEventMapper() {
     }
 
-    public static ReceiptCreatedEvent toCreatedEvent(Receipt receipt) {
+    public static ReceiptCreatedEvent toCreatedEvent(Receipt receipt, String correlationId) {
         return new ReceiptCreatedEvent(
                 receipt.getId(),
                 receipt.getMerchant(),
                 receipt.getAmount(),
                 receipt.getStatus().name(),
-                receipt.getCreatedAt()
+                receipt.getCreatedAt(),
+                correlationId
         );
     }
 }

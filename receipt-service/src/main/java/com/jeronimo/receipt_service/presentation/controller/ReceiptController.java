@@ -25,8 +25,15 @@ public class ReceiptController {
     private final FindReceiptByIdUseCase findReceiptByIdUseCase;
 
     @PostMapping
-    public Mono<ResponseEntity<ReceiptResponse>> create(@Valid @RequestBody CreateReceiptRequest request){
-        return createReceiptUseCase.execute(request)
+    public Mono<ResponseEntity<ReceiptResponse>> create(
+            @RequestHeader(value = "X-Correlation-Id", required = false) String correlationId,
+            @Valid @RequestBody CreateReceiptRequest request
+    ){
+        String finalCorrelationId = correlationId == null || correlationId.isBlank()
+                ? UUID.randomUUID().toString()
+                : correlationId;
+
+        return createReceiptUseCase.execute(request, finalCorrelationId)
             .map(response ->
                 ResponseEntity.status(HttpStatus.CREATED)
                     .body(response)
@@ -39,8 +46,13 @@ public class ReceiptController {
     }
 
     @GetMapping("/{id}")
-    public Mono<ResponseEntity<ReceiptResponse>> findById(@PathVariable UUID id) {
-        return findReceiptByIdUseCase.execute(id)
+    public Mono<ResponseEntity<ReceiptResponse>> findById(
+            @RequestHeader(value = "X-Correlation-Id", required = false) String correlationId,
+            @PathVariable UUID id) {
+        String finalCorrelationId = correlationId == null || correlationId.isBlank()
+                ? UUID.randomUUID().toString()
+                : correlationId;
+        return findReceiptByIdUseCase.execute(id, finalCorrelationId)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }

@@ -22,19 +22,20 @@ public class CreateReceiptUseCase {
     private final ReceiptRepository receiptRepository;
     private final ReceiptEventPublisher receiptEventPublisher;
 
-    public Mono<ReceiptResponse> execute(@Valid CreateReceiptRequest request) {
+    public Mono<ReceiptResponse> execute(@Valid CreateReceiptRequest request, String correlationId) {
         Receipt receipt = Receipt.create(
                 request.merchant(),
                 request.amount()
         );
         return receiptRepository.save(receipt)
                 .doOnNext(savedReceipt -> {
-                    MDC.put("receiptId", savedReceipt.getId().toString());
-                    MDC.put("event", "receipt_created");
-                    log.info("Receipt created successfully");
+                    log.info("Receipt created successfully, receiptId={}, correlationId={}",
+                            receipt.getId(),
+                            correlationId
+                    );
                 })
                 .flatMap(savedReceipt ->
-                    receiptEventPublisher.publishReceiptCreated(ReceiptEventMapper.toCreatedEvent(savedReceipt))
+                    receiptEventPublisher.publishReceiptCreated(ReceiptEventMapper.toCreatedEvent(savedReceipt, correlationId))
                         .thenReturn(savedReceipt)
                 ).map(ReceiptMapper::toResponse);
     }

@@ -14,7 +14,7 @@ import java.util.UUID;
 public class FindReceiptByIdUseCase {
     private final ReceiptRepository receiptRepository;
 
-    public Mono<ReceiptResponse> execute(UUID id){
+    public Mono<ReceiptResponse> execute(UUID id, String finalCorrelationId){
         return receiptRepository.findById(id)
                 .map(ReceiptMapper::toResponse);
     }

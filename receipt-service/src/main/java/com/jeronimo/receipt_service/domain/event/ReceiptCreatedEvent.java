@@ -9,5 +9,6 @@ public record ReceiptCreatedEvent(
         String merchant,
         BigDecimal amount,
         String status,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        String correlationId
 ) { }

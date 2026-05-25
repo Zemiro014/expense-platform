@@ -7,6 +7,7 @@ public record ReceiptValidatedEvent(
         UUID receiptId,
         String status,
         String reason,
-        LocalDateTime validatedAt
+        LocalDateTime validatedAt,
+        String correlationId
 ) {
 }

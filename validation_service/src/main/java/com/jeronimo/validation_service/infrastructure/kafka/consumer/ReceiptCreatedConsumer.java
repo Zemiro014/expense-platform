@@ -4,6 +4,7 @@ import com.jeronimo.validation_service.application.usecase.ValidateReceiptUseCas
 import com.jeronimo.validation_service.domain.event.ReceiptCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
@@ -29,8 +30,13 @@ public class ReceiptCreatedConsumer {
             containerFactory = "kafkaListenerContainerFactory"
     )
     public void consume(ReceiptCreatedEvent event) {
-        log.info("Receipt created event received. receiptId={}", event.receiptId());
+        MDC.put("correlationId", event.correlationId());
+        log.info("Receipt created event received. receiptId={}, correlationId={}",
+                event.receiptId(),
+                event.correlationId()
+        );
         validateReceiptUseCase.execute(event);
+        MDC.clear();
     }
 
     @DltHandler

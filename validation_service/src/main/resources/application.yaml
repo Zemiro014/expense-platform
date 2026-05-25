@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: validation_service
+    name: validation-service
 
   datasource:
     url: jdbc:postgresql://localhost:5433/expense_platform_db
@@ -14,10 +14,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
+    open-in-view: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
 
   kafka:
     bootstrap-servers: localhost:9094
@@ -33,4 +34,9 @@ app:
 
 logging:
   level:
-    org.springframework.kafka: DEBUG
+    root: INFO
+    com.jeronimo.validation_service: INFO
+    org.springframework.kafka: INFO
+    org.apache.kafka: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.orm.jdbc.bind: WARN

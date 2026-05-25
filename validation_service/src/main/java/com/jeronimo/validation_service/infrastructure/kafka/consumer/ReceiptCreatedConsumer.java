@@ -8,6 +8,8 @@ import org.slf4j.MDC;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
 
@@ -40,10 +42,26 @@ public class ReceiptCreatedConsumer {
     }
 
     @DltHandler
-    public void handlerDlt(ReceiptCreatedEvent event){
-        log.error(
-            "Receipt created event sent to DLT. receiptId={}",
-            event.receiptId()
-        );
+    public void handlerDlt(
+            ReceiptCreatedEvent event,
+            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
+            @Header(KafkaHeaders.OFFSET) long offset,
+            @Header(KafkaHeaders.RECEIVED_PARTITION) int partition
+    ){
+        try {
+            MDC.put("correlationId", event.correlationId());
+            MDC.put("receiptId", event.receiptId().toString());
+            MDC.put("event", "receipt_created_sent_to_dlt");
+            MDC.put("topic", topic);
+            MDC.put("offset", String.valueOf(offset));
+            MDC.put("partition", String.valueOf(partition));
+
+            log.error(
+                    "Receipt created event sent to DLT. receiptId={}",
+                    event.receiptId()
+            );
+        } finally {
+            MDC.clear();
+        }
     }
 }

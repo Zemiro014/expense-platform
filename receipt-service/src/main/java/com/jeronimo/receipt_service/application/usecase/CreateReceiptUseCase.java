@@ -29,14 +29,20 @@ public class CreateReceiptUseCase {
         );
         return receiptRepository.save(receipt)
                 .doOnNext(savedReceipt -> {
-                    log.info("Receipt created successfully, receiptId={}, correlationId={}",
-                            receipt.getId(),
-                            correlationId
-                    );
+                    MDC.put("correlationId", correlationId);
+                    MDC.put("receiptId", savedReceipt.getId().toString());
+                    log.info("Receipt Saved Successfully in DB");
                 })
                 .flatMap(savedReceipt ->
                     receiptEventPublisher.publishReceiptCreated(ReceiptEventMapper.toCreatedEvent(savedReceipt, correlationId))
                         .thenReturn(savedReceipt)
-                ).map(ReceiptMapper::toResponse);
+                )
+                .doOnNext(receiptCreated -> {
+                    MDC.put("correlationId", correlationId);
+                    MDC.put("receiptId", receiptCreated.getId().toString());
+                    MDC.put("event", "receipt_created");
+                    log.info("Receipt created event published successfully");
+                })
+                .map(ReceiptMapper::toResponse);
     }
 }

@@ -18,6 +18,13 @@ public class ValidateReceiptUseCase {
     private final ValidationEventPublisher eventPublisher;
 
     public void execute(ReceiptCreatedEvent event) {
+        if (repository.existsByReceiptId(event.receiptId())) {
+            log.info(
+                    "Receipt already validated. Skipping duplicated event. receiptId={}",
+                    event.receiptId()
+            );
+            return;
+        }
 
         ReceiptValidation validation =
                 ReceiptValidation.validate(

@@ -19,7 +19,7 @@ public class ReceiptValidationEntity {
     @Id
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(name = "receipt_id", nullable = false, unique = true)
     private UUID receiptId;
 
     @Column(nullable = false)

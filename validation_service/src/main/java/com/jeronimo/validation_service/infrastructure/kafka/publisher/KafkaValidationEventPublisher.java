@@ -1,4 +1,4 @@
-package com.jeronimo.validation_service.infrastructure.persistence;
+package com.jeronimo.validation_service.infrastructure.kafka.publisher;
 
 import com.jeronimo.validation_service.domain.event.ReceiptValidatedEvent;
 import com.jeronimo.validation_service.domain.publisher.ValidationEventPublisher;

@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -27,7 +29,20 @@ public class JpaReceiptValidationRepository implements ReceiptValidationReposito
     }
 
     @Override
-    public List<ReceiptValidationEntity> findAll() {
-        return repository.findAll();
+    public List<ReceiptValidation> findAll() {
+        return repository.findAll().stream()
+                .map(ReceiptValidationEntityMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public Optional<ReceiptValidation> findByReceiptId(UUID receiptId) {
+        return repository.findByReceiptId(receiptId)
+                .map(ReceiptValidationEntityMapper::toDomain);
+    }
+
+    @Override
+    public boolean existsByReceiptId(UUID receiptId) {
+        return repository.existsByReceiptId(receiptId);
     }
 }

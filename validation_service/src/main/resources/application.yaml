@@ -22,13 +22,14 @@ spring:
   kafka:
     bootstrap-servers: localhost:9094
     consumer:
-      group-id: validation-service-group-v2
+      group-id: validation-service-group
       auto-offset-reset: earliest
 
 app:
   kafka:
     topics:
       receipt-created: receipt-created
+      receipt-validated: receipt-validated
 
 logging:
   level:

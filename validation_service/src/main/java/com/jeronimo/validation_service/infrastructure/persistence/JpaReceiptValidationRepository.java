@@ -8,6 +8,8 @@ import com.jeronimo.validation_service.infrastructure.persistence.repository.Spr
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class JpaReceiptValidationRepository implements ReceiptValidationRepository {
@@ -22,5 +24,10 @@ public class JpaReceiptValidationRepository implements ReceiptValidationReposito
                 repository.save(entity);
 
         return ReceiptValidationEntityMapper.toDomain(savedEntity);
+    }
+
+    @Override
+    public List<ReceiptValidationEntity> findAll() {
+        return repository.findAll();
     }
 }

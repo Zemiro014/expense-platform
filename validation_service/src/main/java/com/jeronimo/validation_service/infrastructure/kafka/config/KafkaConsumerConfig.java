@@ -49,6 +49,7 @@ public class KafkaConsumerConfig {
         factory.setConsumerFactory(consumerFactory);
         factory.setMissingTopicsFatal(false);
         factory.setCommonErrorHandler(new DefaultErrorHandler());
+        factory.getContainerProperties().setObservationEnabled(true);
 
         return factory;
     }

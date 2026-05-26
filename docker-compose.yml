@@ -22,7 +22,14 @@ services:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
     ports:
       - "4318:4318" # Porta HTTP do OTLP que deu erro na sua aplicação
-
+      - "8889:8889"
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    ports:
+      - "16686:16686" # UI
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
   # NOVO: Prometheus para visualizar os gráficos de métricas
   prometheus:
     image: prom/prometheus:latest

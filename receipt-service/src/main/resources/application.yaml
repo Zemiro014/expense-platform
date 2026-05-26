@@ -28,14 +28,12 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus,traces
+        include: health,info,metrics,prometheus
+
   tracing:
-    export:
-      enabled: true
     sampling:
       probability: 1.0
-  opentelemetry:
+
+  otlp:
     tracing:
-      export:
-        otlp:
-          endpoint: http://localhost:4318/v1/traces
+      endpoint: http://localhost:4318/v1/traces

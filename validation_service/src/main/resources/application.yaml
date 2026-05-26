@@ -32,6 +32,20 @@ app:
       receipt-created: receipt-created
       receipt-validated: receipt-validated
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+  tracing:
+    sampling:
+      probability: 1.0
+
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
+
 logging:
   level:
     root: INFO

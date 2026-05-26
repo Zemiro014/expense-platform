@@ -30,6 +30,11 @@ public class KafkaProducerConfig {
     public KafkaTemplate<String, ReceiptCreatedEvent> receiptKafkaTemplate(
             ProducerFactory<String, ReceiptCreatedEvent> producerFactory
     ) {
-        return new KafkaTemplate<>(producerFactory);
+        KafkaTemplate<String, ReceiptCreatedEvent> kafkaTemplate =
+                new KafkaTemplate<>(producerFactory);
+
+        kafkaTemplate.setObservationEnabled(true);
+
+        return kafkaTemplate;
     }
 }

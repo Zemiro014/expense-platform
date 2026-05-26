@@ -16,7 +16,9 @@
                 <pattern>
                     <pattern>
                         {
-                        "service": "${serviceName}"
+                        "service": "${serviceName}",
+                        "traceId": "%X{traceId:-}",
+                        "spanId": "%X{spanId:-}"
                         }
                     </pattern>
                 </pattern>

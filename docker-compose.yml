@@ -1,7 +1,7 @@
 version: '3.3'
 
 services:
-  expense_platform_db:
+  expense_platform:
     image: postgres:15-alpine
     container_name: webflux-postgres
     restart: always
@@ -13,6 +13,11 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U devAdmin -d expense_platform_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
@@ -74,6 +79,65 @@ services:
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
     depends_on:
       - kafka
+
+  receipt-service:
+    build:
+      context: ./receipt-service
+      dockerfile: Dockerfile
+    container_name: receipt-service
+    ports:
+      - "8180:8180"
+    environment:
+      R2DBC_URL: r2dbc:postgresql://expense_platform/expense_platform_db
+      DB_USERNAME: devAdmin
+      DB_PASSWORD: devAdmin
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces
+    depends_on:
+      - expense_platform
+      - kafka
+      - jaeger
+
+  validation-service:
+    build:
+      context: ./validation_service
+      dockerfile: Dockerfile
+    container_name: validation-service
+    ports:
+      - "8181:8181"
+    environment:
+      JDBC_URL: jdbc:postgresql://expense_platform:5432/expense_platform_db
+      DB_USERNAME: devAdmin
+      DB_PASSWORD: devAdmin
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_CONSUMER_GROUP_ID: validation-service-group
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces
+    depends_on:
+      - expense_platform
+      - kafka
+      - jaeger
+      - receipt-service
+  
+  notification-service:
+    build:
+      context: ./notification_service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    ports:
+      - "8182:8182"
+    environment:
+      JDBC_URL: jdbc:postgresql://expense_platform:5432/expense_platform_db
+      DB_USERNAME: devAdmin
+      DB_PASSWORD: devAdmin
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_CONSUMER_GROUP_ID: notification-service-group
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces
+    depends_on:
+      - expense_platform
+      - kafka
+      - jaeger
+      - receipt-service
+      - validation-service
 
 volumes:
   kafka_data:

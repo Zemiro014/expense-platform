@@ -5,15 +5,15 @@ spring:
   application:
     name: receipt-service
   r2dbc:
-    url: r2dbc:postgresql://localhost:5433/expense_platform_db
-    username: devAdmin
-    password: devAdmin
+    url: ${R2DBC_URL:r2dbc:postgresql://localhost:5433/expense_platform_db}
+    username: ${DB_USERNAME:devAdmin}
+    password: ${DB_PASSWORD:devAdmin}
   sql:
     init:
       mode: always
       schema-locations: classpath:schema.sql
   kafka:
-    bootstrap-servers: localhost:9094
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9094}
   swagger-ui:
     path: /swagger-ui.html
   api-docs:
@@ -36,4 +36,4 @@ management:
 
   otlp:
     tracing:
-      endpoint: http://localhost:4318/v1/traces
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318/v1/traces}

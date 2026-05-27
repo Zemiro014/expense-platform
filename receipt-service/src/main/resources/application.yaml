@@ -30,6 +30,10 @@ management:
       exposure:
         include: health,info,metrics,prometheus
 
+  endpoint:
+    health:
+      show-details: always
+
   tracing:
     sampling:
       probability: 1.0

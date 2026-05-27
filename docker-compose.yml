@@ -43,6 +43,20 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml # Mapeia o arquivo de configuração
     ports:
       - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana_data:/var/lib/grafana
+
   kafka:
     image: apache/kafka:latest
     container_name: kafka
@@ -142,3 +156,4 @@ services:
 volumes:
   kafka_data:
   postgres_data:
+  grafana_data:

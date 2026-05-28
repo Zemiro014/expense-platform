@@ -28,21 +28,33 @@ public class CreateReceiptUseCase {
                 request.amount()
         );
         return receiptRepository.save(receipt)
-                .doOnNext(savedReceipt -> {
+            .doOnNext(savedReceipt -> {
+                try {
                     MDC.put("correlationId", correlationId);
                     MDC.put("receiptId", savedReceipt.getId().toString());
-                    log.info("Receipt Saved Successfully in DB");
-                })
-                .flatMap(savedReceipt ->
-                    receiptEventPublisher.publishReceiptCreated(ReceiptEventMapper.toCreatedEvent(savedReceipt, correlationId))
-                        .thenReturn(savedReceipt)
-                )
-                .doOnNext(receiptCreated -> {
+                    MDC.put("event", "receipt_saved");
+                    log.info("Receipt saved successfully in DB");
+                } finally {
+                    MDC.clear();
+                }
+            }).flatMap(savedReceipt ->
+                receiptEventPublisher
+                    .publishReceiptCreated(
+                        ReceiptEventMapper.toCreatedEvent(
+                            savedReceipt,
+                            correlationId
+                        )
+                    ).thenReturn(savedReceipt))
+            .doOnNext(savedReceipt -> {
+                try {
                     MDC.put("correlationId", correlationId);
-                    MDC.put("receiptId", receiptCreated.getId().toString());
-                    MDC.put("event", "receipt_created");
+                    MDC.put("receiptId", savedReceipt.getId().toString());
+                    MDC.put("event", "receipt_created_published");
                     log.info("Receipt created event published successfully");
-                })
-                .map(ReceiptMapper::toResponse);
+                } finally {
+                    MDC.clear();
+                }
+            })
+            .map(ReceiptMapper::toResponse);
     }
 }

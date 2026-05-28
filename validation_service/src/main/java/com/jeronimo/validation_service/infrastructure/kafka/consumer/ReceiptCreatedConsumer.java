@@ -32,13 +32,18 @@ public class ReceiptCreatedConsumer {
             containerFactory = "kafkaListenerContainerFactory"
     )
     public void consume(ReceiptCreatedEvent event) {
-        MDC.put("correlationId", event.correlationId());
-        log.info("Receipt created event received. receiptId={}, correlationId={}",
-                event.receiptId(),
-                event.correlationId()
-        );
-        validateReceiptUseCase.execute(event);
-        MDC.clear();
+        try {
+            MDC.put("correlationId", event.correlationId());
+            MDC.put("receiptId", event.receiptId().toString());
+            MDC.put("flow", "receipt-validation");
+            MDC.put("event", "receipt_created_consumed");
+            log.info("Receipt Created event Received");
+
+            validateReceiptUseCase.execute(event);
+
+        } finally {
+            MDC.clear();
+        }
     }
 
     @DltHandler

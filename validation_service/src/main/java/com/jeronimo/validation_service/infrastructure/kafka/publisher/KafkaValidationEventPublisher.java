@@ -4,6 +4,7 @@ import com.jeronimo.validation_service.domain.event.ReceiptValidatedEvent;
 import com.jeronimo.validation_service.domain.publisher.ValidationEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -26,10 +27,12 @@ public class KafkaValidationEventPublisher implements ValidationEventPublisher {
                 event
         );
 
-        log.info(
-                "Receipt validated event published. receiptId={}, status={}",
-                event.receiptId(),
-                event.status()
-        );
+        MDC.put("event", "receipt_validated_published");
+        MDC.put("topic", receiptValidatedTopic);
+
+        log.info("Receipt validated event published");
+
+        MDC.remove("event");
+        MDC.remove("topic");
     }
 }

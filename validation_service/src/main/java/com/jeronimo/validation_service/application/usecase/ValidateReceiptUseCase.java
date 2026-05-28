@@ -7,6 +7,7 @@ import com.jeronimo.validation_service.domain.publisher.ValidationEventPublisher
 import com.jeronimo.validation_service.domain.repository.ReceiptValidationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -19,11 +20,9 @@ public class ValidateReceiptUseCase {
 
     public void execute(ReceiptCreatedEvent event) {
         if (repository.existsByReceiptId(event.receiptId())) {
-            log.info(
-                    "Receipt already validated. Skipping duplicated event. receiptId={}, correlationId={}",
-                    event.receiptId(),
-                    event.correlationId()
-            );
+            MDC.put("event", "receipt_validation_skipped");
+            log.info("Receipt already validated. Skipping duplicated event");
+            MDC.remove("event");
             return;
         }
 
@@ -36,13 +35,11 @@ public class ValidateReceiptUseCase {
 
         ReceiptValidation savedValidation = repository.save(validation);
 
-        log.info(
-                "Receipt validated and saved successfully. receiptId={}, status={}, reason={}, correlationId={}",
-                savedValidation.getReceiptId(),
-                savedValidation.getStatus(),
-                savedValidation.getReason(),
-                event.correlationId()
-        );
+        MDC.put("event", "receipt_validated");
+        MDC.put("validationStatus", savedValidation.getStatus().name());
+        log.info("Receipt validated successfully");
+        MDC.remove("event");
+        MDC.remove("validationStatus");
 
         eventPublisher.publishValidated(
                 ValidationEventMapper.toValidatedEvent(savedValidation)

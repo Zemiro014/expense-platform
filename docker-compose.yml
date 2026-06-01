@@ -180,6 +180,33 @@ services:
       logging: "promtail"
       service: "notification-service"
 
+  ai-classification-service:
+    build:
+      context: ./ai-classification-service
+      dockerfile: Dockerfile
+    container_name: ai-classification-service
+    ports:
+      - "8183:8183"
+    environment:
+      JDBC_URL: jdbc:postgresql://expense_platform:5432/expense_platform_db
+      DB_USERNAME: devAdmin
+      DB_PASSWORD: devAdmin
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_CONSUMER_GROUP_ID: ai-classification-service-group
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_MODEL: qwen2.5:1.5b
+    depends_on:
+      - expense_platform
+      - kafka
+      - jaeger
+      - receipt-service
+      - validation-service
+      - ollama
+    labels:
+      logging: "promtail"
+      service: "ai-classification-service"
+
 # AI Agent
   ollama:
     image: ollama/ollama:latest
@@ -189,6 +216,16 @@ services:
     volumes:
       - ollama_data:/root/.ollama
     restart: unless-stopped
+
+  ollama-pull:
+    image: ollama/ollama:latest
+    container_name: ollama-pull
+    volumes:
+      - ollama_data:/root/.ollama
+    entrypoint: >
+      sh -c "ollama pull qwen2.5:1.5b"
+    depends_on:
+      - ollama
 
 volumes:
   kafka_data:

@@ -1,4 +1,4 @@
-package com.jeronimo.ai_classification_service.infrastructure.ia.ollama.dto;
+package com.jeronimo.ai_classification_service.infrastructure.ai.ollama.dto;
 
 public record OllamaGenerateResponse(
         String model,

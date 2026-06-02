@@ -30,11 +30,11 @@ public class ClassifyReceiptUseCase {
         }
 
         ReceiptClassification classification =
-                receiptAiClassifier.classify(
-                        event.receiptId(),
-                        event.merchant(),
-                        event.amount()
-                );
+            receiptAiClassifier.classify(
+                event.receiptId(),
+                event.merchant(),
+                event.amount()
+            );
 
         ReceiptClassification saved =
                 repository.save(classification);

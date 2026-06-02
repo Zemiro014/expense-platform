@@ -1,4 +1,4 @@
-package com.jeronimo.ai_classification_service.infrastructure.ia.ollama.config;
+package com.jeronimo.ai_classification_service.infrastructure.ai.ollama.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 
 @Configuration
-public class OllamaWebClientConfig {
+public class OllamaRestClientConfig {
     @Bean
     public RestClient ollamaRestClient(
             RestClient.Builder builder,

@@ -3,8 +3,10 @@ package com.jeronimo.ai_classification_service.infrastructure.ai.ollama;
 import com.jeronimo.ai_classification_service.domain.ai.AiInferenceClient;
 import com.jeronimo.ai_classification_service.domain.ai.AiInferenceRequest;
 import com.jeronimo.ai_classification_service.domain.ai.AiInferenceResult;
+import com.jeronimo.ai_classification_service.domain.model.AiInferenceAudit;
 import com.jeronimo.ai_classification_service.domain.model.ExpenseCategory;
 import com.jeronimo.ai_classification_service.domain.model.ReceiptClassification;
+import com.jeronimo.ai_classification_service.domain.repository.AiInferenceAuditRepository;
 import com.jeronimo.ai_classification_service.domain.service.ReceiptAiClassifier;
 import com.jeronimo.ai_classification_service.infrastructure.ai.ollama.dto.OllamaGenerateRequest;
 import com.jeronimo.ai_classification_service.infrastructure.ai.ollama.dto.OllamaGenerateResponse;
@@ -27,6 +29,7 @@ public class OllamaReceiptAiClassifier implements ReceiptAiClassifier {
     private static final String PROMPT_VERSION = "expense-classification-v1";
 
     private final AiInferenceClient aiInferenceClient;
+    private final AiInferenceAuditRepository auditRepository;
 
     @Override
     public ReceiptClassification classify(
@@ -51,6 +54,19 @@ public class OllamaReceiptAiClassifier implements ReceiptAiClassifier {
 
         ExpenseCategory category =
             normalizeCategory(result.rawOutput());
+
+        AiInferenceAudit audit = AiInferenceAudit.create(
+            receiptId,
+            result.useCase(),
+            result.modelName(),
+            result.promptVersion(),
+            result.rawOutput(),
+            category.name(),
+            result.latencyMs(),
+            result.fallbackUsed(),
+            result.errorMessage()
+        );
+        auditRepository.save(audit);
 
         return ReceiptClassification.create(
             receiptId,

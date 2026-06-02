@@ -75,6 +75,7 @@ public class OllamaAiInferenceClient implements AiInferenceClient {
             log.info("AI inference completed");
 
             return new AiInferenceResult(
+                request.useCase(),
                 model,
                 request.promptVersion(),
                 rawOutput,
@@ -92,12 +93,13 @@ public class OllamaAiInferenceClient implements AiInferenceClient {
             log.error("AI inference failed", ex);
 
             return new AiInferenceResult(
-                    model,
-                    request.promptVersion(),
-                    "",
-                    latencyMs,
-                    true,
-                    ex.getMessage()
+                request.useCase(),
+                model,
+                request.promptVersion(),
+                "",
+                latencyMs,
+                true,
+                ex.getMessage()
             );
 
         } finally {

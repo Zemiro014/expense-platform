@@ -4,6 +4,7 @@ import com.jeronimo.ai_classification_service.application.mapper.ReceiptClassifi
 import com.jeronimo.ai_classification_service.domain.event.ReceiptCreatedEvent;
 import com.jeronimo.ai_classification_service.domain.model.ReceiptClassification;
 import com.jeronimo.ai_classification_service.domain.publisher.ReceiptClassificationEventPublisher;
+import com.jeronimo.ai_classification_service.domain.repository.AiInferenceAuditRepository;
 import com.jeronimo.ai_classification_service.domain.repository.ReceiptClassificationRepository;
 import com.jeronimo.ai_classification_service.domain.service.ReceiptAiClassifier;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,6 @@
 package com.jeronimo.ai_classification_service.domain.model;
 
+import com.jeronimo.ai_classification_service.domain.ai.AiInferenceResult;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,6 +19,7 @@ public class ReceiptClassification {
     private Double confidence;
     private String reason;
     private LocalDateTime classifiedAt;
+    private AiInferenceResult inferenceResult;
 
     public static ReceiptClassification create(
             UUID receiptId,
@@ -25,7 +27,8 @@ public class ReceiptClassification {
             BigDecimal amount,
             ExpenseCategory category,
             Double confidence,
-            String reason
+            String reason,
+            AiInferenceResult inferenceResult
     ) {
         return ReceiptClassification.builder()
                 .id(UUID.randomUUID())
@@ -35,6 +38,7 @@ public class ReceiptClassification {
                 .category(category)
                 .confidence(confidence)
                 .reason(reason)
+                .inferenceResult(inferenceResult)
                 .classifiedAt(LocalDateTime.now())
                 .build();
     }

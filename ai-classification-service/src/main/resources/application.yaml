@@ -57,3 +57,26 @@ logging:
     com.jeronimo.ai_classification_service: INFO
     org.springframework.kafka: INFO
     org.apache.kafka: WARN
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      ollamaAi:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        failureRateThreshold: 50
+        waitDurationInOpenState: 20s
+        permittedNumberOfCallsInHalfOpenState: 2
+
+  retry:
+    instances:
+      ollamaAi:
+        maxAttempts: 2
+        waitDuration: 1s
+
+  timelimiter:
+    instances:
+      ollamaAi:
+        timeoutDuration: 8s

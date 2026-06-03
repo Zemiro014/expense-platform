@@ -86,22 +86,10 @@ public class OllamaAiInferenceClient implements AiInferenceClient {
 
         } catch (Exception ex) {
             long latencyMs = System.currentTimeMillis() - startTime;
-
             MDC.put("event", "ai_inference_failed");
             MDC.put("latencyMs", String.valueOf(latencyMs));
-
             log.error("AI inference failed", ex);
-
-            return new AiInferenceResult(
-                request.useCase(),
-                model,
-                request.promptVersion(),
-                "",
-                latencyMs,
-                true,
-                ex.getMessage()
-            );
-
+            throw ex;
         } finally {
             MDC.remove("event");
             MDC.remove("aiProvider");

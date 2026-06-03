@@ -1,7 +1,9 @@
 package com.jeronimo.ai_classification_service.application.usecase;
 
 import com.jeronimo.ai_classification_service.application.mapper.ReceiptClassifiedEventMapper;
+import com.jeronimo.ai_classification_service.domain.ai.AiInferenceResult;
 import com.jeronimo.ai_classification_service.domain.event.ReceiptCreatedEvent;
+import com.jeronimo.ai_classification_service.domain.model.AiInferenceAudit;
 import com.jeronimo.ai_classification_service.domain.model.ReceiptClassification;
 import com.jeronimo.ai_classification_service.domain.publisher.ReceiptClassificationEventPublisher;
 import com.jeronimo.ai_classification_service.domain.repository.AiInferenceAuditRepository;
@@ -10,16 +12,30 @@ import com.jeronimo.ai_classification_service.domain.service.ReceiptAiClassifier
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class ClassifyReceiptUseCase {
 
     private final ReceiptAiClassifier receiptAiClassifier;
     private final ReceiptClassificationRepository repository;
     private final ReceiptClassificationEventPublisher eventPublisher;
+    private final AiInferenceAuditRepository auditRepository;
+
+    public ClassifyReceiptUseCase(
+            @Qualifier("resilientReceiptAiClassifier")
+            ReceiptAiClassifier receiptAiClassifier,
+            ReceiptClassificationRepository repository,
+            ReceiptClassificationEventPublisher eventPublisher,
+            AiInferenceAuditRepository auditRepository
+    ) {
+        this.receiptAiClassifier = receiptAiClassifier;
+        this.repository = repository;
+        this.eventPublisher = eventPublisher;
+        this.auditRepository = auditRepository;
+    }
 
     public void execute(ReceiptCreatedEvent event) {
 
@@ -49,6 +65,22 @@ public class ClassifyReceiptUseCase {
         MDC.remove("event");
         MDC.remove("category");
         MDC.remove("confidence");
+
+        AiInferenceResult inferenceResult = classification.getInferenceResult();
+        if(inferenceResult != null) {
+            AiInferenceAudit audit = AiInferenceAudit.create(
+                    classification.getReceiptId(),
+                    inferenceResult.useCase(),
+                    inferenceResult.modelName(),
+                    inferenceResult.promptVersion(),
+                    inferenceResult.rawOutput(),
+                    classification.getCategory().name(),
+                    inferenceResult.latencyMs(),
+                    inferenceResult.fallbackUsed(),
+                    inferenceResult.errorMessage()
+            );
+            auditRepository.save(audit);
+        }
 
         eventPublisher.publishClassified(
                 ReceiptClassifiedEventMapper.toEvent(

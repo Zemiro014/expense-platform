@@ -29,7 +29,6 @@ public class OllamaReceiptAiClassifier implements ReceiptAiClassifier {
     private static final String PROMPT_VERSION = "expense-classification-v1";
 
     private final AiInferenceClient aiInferenceClient;
-    private final AiInferenceAuditRepository auditRepository;
 
     @Override
     public ReceiptClassification classify(
@@ -39,7 +38,7 @@ public class OllamaReceiptAiClassifier implements ReceiptAiClassifier {
     ) {
         String prompt = buildPrompt(merchant, amount);
 
-        AiInferenceResult result = aiInferenceClient.infer(
+        AiInferenceResult inferenceResult = aiInferenceClient.infer(
             new AiInferenceRequest(
                 USE_CASE,
                 PROMPT_VERSION,
@@ -53,28 +52,17 @@ public class OllamaReceiptAiClassifier implements ReceiptAiClassifier {
         );
 
         ExpenseCategory category =
-            normalizeCategory(result.rawOutput());
-
-        AiInferenceAudit audit = AiInferenceAudit.create(
-            receiptId,
-            result.useCase(),
-            result.modelName(),
-            result.promptVersion(),
-            result.rawOutput(),
-            category.name(),
-            result.latencyMs(),
-            result.fallbackUsed(),
-            result.errorMessage()
-        );
-        auditRepository.save(audit);
+            normalizeCategory(inferenceResult.rawOutput());
 
         return ReceiptClassification.create(
             receiptId,
             merchant,
             amount,
             category,
-            confidenceFor(category, result.fallbackUsed()),
-            reasonFor(category, merchant, result)
+            confidenceFor(category, inferenceResult.fallbackUsed()),
+            reasonFor(category, merchant, inferenceResult),
+                inferenceResult
+
         );
     }
 

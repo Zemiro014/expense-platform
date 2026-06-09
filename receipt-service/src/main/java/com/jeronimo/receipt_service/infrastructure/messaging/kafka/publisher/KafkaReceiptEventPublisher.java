@@ -18,6 +18,12 @@ public class KafkaReceiptEventPublisher implements ReceiptEventPublisher {
 
     @Override
     public Mono<Void> publishReceiptCreated(ReceiptCreatedEvent receiptCreatedEvent) {
+        if (receiptCreatedTopic == null || receiptCreatedTopic.isBlank()){
+            throw new IllegalArgumentException("topic is required");
+        }
+        if(receiptCreatedEvent.receiptId() == null){
+            throw new IllegalArgumentException("receiptId is required");
+        }
         return Mono.fromFuture(() ->
                 eventKafkaTemplate.send(
                         receiptCreatedTopic,

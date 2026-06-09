@@ -17,23 +17,26 @@ import java.util.Map;
 public class KafkaProducerConfig {
 
     @Bean
-    public ProducerFactory<String, ReceiptValidatedEvent> receiptValidatedProducerFactory(
+    public ProducerFactory<String, String> outboxProducerFactory(
             KafkaProperties kafkaProperties
     ) {
         Map<String, Object> props = kafkaProperties.buildProducerProperties();
 
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+
+        props.put(ProducerConfig.ACKS_CONFIG, "all");
+        props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
         return new DefaultKafkaProducerFactory<>(props);
     }
 
     @Bean
-    public KafkaTemplate<String, ReceiptValidatedEvent> receiptValidatedKafkaTemplate(
-            ProducerFactory<String, ReceiptValidatedEvent> producerFactory
+    public KafkaTemplate<String, String> outboxKafkaTemplate(
+            ProducerFactory<String, String> outboxProducerFactory
     ) {
-        KafkaTemplate<String, ReceiptValidatedEvent> kafkaTemplate =
-                new KafkaTemplate<>(producerFactory);
+        KafkaTemplate<String, String> kafkaTemplate =
+                new KafkaTemplate<>(outboxProducerFactory);
 
         kafkaTemplate.setObservationEnabled(true);
 

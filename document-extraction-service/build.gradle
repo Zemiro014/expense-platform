@@ -1,0 +1,75 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.0'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.jeronimo'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+
+	// Web MVC
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// JPA
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// PostgreSQL
+	runtimeOnly 'org.postgresql:postgresql'
+
+	// Kafka
+	implementation 'org.springframework.kafka:spring-kafka'
+
+	// Validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Actuator
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	// OpenTelemetry / Micrometer
+	implementation 'io.micrometer:micrometer-tracing-bridge-otel'
+	implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+	implementation 'net.ttddyy.observation:datasource-micrometer-spring-boot:1.0.2'
+
+	// Swagger/OpenAPI
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
+
+	// Structured Logs
+	implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// Devtools
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// Tests
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// Kafka Tests
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+	// Testcontainers
+	testImplementation 'org.testcontainers:junit-jupiter'
+	testImplementation 'org.testcontainers:postgresql'
+	testImplementation 'org.testcontainers:kafka'
+
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

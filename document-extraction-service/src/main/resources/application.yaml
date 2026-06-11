@@ -20,6 +20,13 @@ spring:
       hibernate:
         format_sql: false
 
+app:
+  storage:
+    base-path: /app/data/uploads
+  kafka:
+    topics:
+      receipt-document-extracted: receipt-document-extracted
+
 management:
   endpoints:
     web:

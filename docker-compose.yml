@@ -170,11 +170,12 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       KAFKA_CONSUMER_GROUP_ID: validation-service-group
       OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces
+    volumes:
+      - document_storage_data:/app/data/uploads
     depends_on:
       - expense_platform
       - kafka
       - jaeger
-      - receipt-service
     labels:
       logging: "promtail"
       service: "document-extraction-service"
@@ -255,3 +256,4 @@ volumes:
   postgres_data:
   grafana_data:
   ollama_data:
+  document_storage_data:

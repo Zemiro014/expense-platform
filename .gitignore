@@ -1,1 +1,35 @@
-// GitIgnore
+# Java / Gradle
+.gradle/
+build/
+target/
+out/
+
+# IntelliJ
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Docker volumes/data
+postgres-data/
+kafka-data/
+zookeeper-data/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# OpenTelemetry agent
+*.jar
+
+# Temporary files
+tmp/

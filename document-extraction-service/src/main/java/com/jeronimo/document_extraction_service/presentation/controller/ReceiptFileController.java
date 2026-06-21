@@ -4,10 +4,15 @@ import com.jeronimo.document_extraction_service.application.usecase.FindStoredFi
 import com.jeronimo.document_extraction_service.application.usecase.UploadReceiptFileUseCase;
 import com.jeronimo.document_extraction_service.presentation.mapper.StoredFileResponseMapper;
 import com.jeronimo.document_extraction_service.presentation.response.StoredFileResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.MDC;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -21,9 +26,15 @@ public class ReceiptFileController {
     private final UploadReceiptFileUseCase uploadUseCase;
     private final FindStoredFileUseCase findUseCase;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @Operation(
+//        summary = "Upload receipt file and extract text using OCR",
+//        requestBody = @RequestBody(
+//            content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
+//        )
+//    )
     public ResponseEntity<StoredFileResponse> upload(
-        @RequestPart("file") MultipartFile file,
+            @RequestParam("file") MultipartFile file,
         @RequestHeader(value = "X-Correlation-Id", required = false) String correlationId
     ) {
         try {

@@ -26,10 +26,8 @@ public class UploadReceiptFileUseCase {
     private final StoredFileRepository storedFileRepository;
     private final ReceiptDocumentExtractedEventPublisher eventPublisher;
 
-    public StoredFile execute(
-            MultipartFile multipartFile,
-            String correlationId
-    ) {
+    public StoredFile execute(MultipartFile multipartFile, String correlationId)
+    {
         validate(multipartFile);
 
         StoredFileLocation location = fileStorageService.store(multipartFile);

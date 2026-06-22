@@ -20,9 +20,20 @@ spring:
       hibernate:
         format_sql: false
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9094}
+    consumer:
+      group-id: validation-service-group
+      auto-offset-reset: earliest
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
 app:
   storage:
-    base-path: /app/data/uploads
+    base-path: ${FILE_STORAGE_PATH:./data/uploads/receipts}
   kafka:
     topics:
       receipt-document-extracted: receipt-document-extracted

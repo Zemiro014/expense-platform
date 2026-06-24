@@ -14,25 +14,25 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class KafkaReceiptDocumentExtractedEventPublisher implements ReceiptDocumentExtractedEventPublisher {
 
-    private final KafkaTemplate<String, ReceiptDocumentExtractedEvent> kafkaTemplate;
+//    private final KafkaTemplate<String, ReceiptDocumentExtractedEvent> kafkaTemplate;
 
     @Value("${app.kafka.topics.receipt-document-extracted}")
     private String topic;
 
     @Override
     public void publish(ReceiptDocumentExtractedEvent event) {
-        try {
-            MDC.put("event", "receipt_document_extracted_publish_requested");
-            MDC.put("fileId", event.fileId().toString());
-            MDC.put("topic", topic);
-
-            kafkaTemplate.send(topic, event.fileId().toString(), event);
-
-            log.info("Receipt document extracted event published");
-        } finally {
-            MDC.remove("event");
-            MDC.remove("fileId");
-            MDC.remove("topic");
-        }
+//        try {
+//            MDC.put("event", "receipt_document_extracted_publish_requested");
+//            MDC.put("fileId", event.fileId().toString());
+//            MDC.put("topic", topic);
+//
+//            kafkaTemplate.send(topic, event.fileId().toString(), event);
+//
+//            log.info("Receipt document extracted event published");
+//        } finally {
+//            MDC.remove("event");
+//            MDC.remove("fileId");
+//            MDC.remove("topic");
+//        }
     }
 }

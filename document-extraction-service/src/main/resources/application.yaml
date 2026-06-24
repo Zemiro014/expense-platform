@@ -37,6 +37,9 @@ app:
   kafka:
     topics:
       receipt-document-extracted: receipt-document-extracted
+  outbox:
+    publisher:
+      fixed-delay-ms: 5000
 
 management:
   endpoints:

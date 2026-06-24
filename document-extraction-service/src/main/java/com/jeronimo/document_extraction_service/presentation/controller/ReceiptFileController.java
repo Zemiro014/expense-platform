@@ -32,14 +32,8 @@ public class ReceiptFileController {
         @RequestHeader(value = "X-Correlation-Id", required = false) String correlationId
     ) {
         try {
-            String safeCorrelationId =
-                correlationId == null || correlationId.isBlank()
-                    ? UUID.randomUUID().toString()
-                    : correlationId;
-
-            MDC.put("correlationId", safeCorrelationId);
             MDC.put("event", "receipt_file_upload_requested");
-            StoredFile storedFile = uploadUseCase.execute(file, safeCorrelationId);
+            StoredFile storedFile = uploadUseCase.execute(file);
 
             return ResponseEntity.ok(StoredFileResponseMapper.toResponse(storedFile));
         } finally {

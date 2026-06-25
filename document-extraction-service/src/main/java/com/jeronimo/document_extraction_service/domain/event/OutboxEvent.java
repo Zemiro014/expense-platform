@@ -1,5 +1,6 @@
 package com.jeronimo.document_extraction_service.domain.event;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,7 +15,7 @@ public class OutboxEvent {
     private String aggregateType;
     private String eventType;
     private String topic;
-    private String payload;
+    private JsonNode documentExtractedKafkaEvent;
     private OutboxStatus status;
     private Integer retryCount;
     private String errorMessage;
@@ -26,7 +27,7 @@ public class OutboxEvent {
             String aggregateType,
             String eventType,
             String topic,
-            String payload
+            JsonNode documentExtractedKafkaEvent
     ){
         return OutboxEvent.builder()
                 .id(UUID.randomUUID())
@@ -34,7 +35,7 @@ public class OutboxEvent {
                 .aggregateType(aggregateType)
                 .eventType(eventType)
                 .topic(topic)
-                .payload(payload)
+                .documentExtractedKafkaEvent(documentExtractedKafkaEvent)
                 .status(OutboxStatus.PENDING)
                 .retryCount(0)
                 .createdAt(LocalDateTime.now())

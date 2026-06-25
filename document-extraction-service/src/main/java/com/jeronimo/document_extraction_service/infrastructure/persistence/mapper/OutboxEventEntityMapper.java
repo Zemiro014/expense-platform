@@ -15,7 +15,7 @@ public class OutboxEventEntityMapper {
         entity.setAggregateType(event.getAggregateType());
         entity.setEventType(event.getEventType());
         entity.setTopic(event.getTopic());
-        entity.setPayload(event.getPayload());
+        entity.setDocumentExtractedEvent(event.getDocumentExtractedKafkaEvent());
         entity.setStatus(event.getStatus());
         entity.setRetryCount(event.getRetryCount());
         entity.setErrorMessage(event.getErrorMessage());
@@ -32,7 +32,7 @@ public class OutboxEventEntityMapper {
                 .aggregateType(entity.getAggregateType())
                 .eventType(entity.getEventType())
                 .topic(entity.getTopic())
-                .payload(entity.getPayload())
+                .documentExtractedKafkaEvent(entity.getDocumentExtractedEvent())
                 .status(entity.getStatus())
                 .retryCount(entity.getRetryCount())
                 .errorMessage(entity.getErrorMessage())

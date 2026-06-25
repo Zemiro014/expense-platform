@@ -1,5 +1,6 @@
 package com.jeronimo.document_extraction_service.infrastructure.kafka.publisher;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jeronimo.document_extraction_service.domain.event.OutboxEvent;
 import com.jeronimo.document_extraction_service.domain.repository.OutboxEventRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OutboxEventPublisher {
     private final OutboxEventRepository outboxRepository;
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, JsonNode> kafkaTemplate;
 
     public void publish(OutboxEvent event) {
         try {
@@ -26,7 +27,7 @@ public class OutboxEventPublisher {
             kafkaTemplate.send(
                     event.getTopic(),
                     event.getAggregateId().toString(),
-                    event.getPayload()
+                    event.getDocumentExtractedKafkaEvent()
             ).get();
 
             outboxRepository.markAsPublished(event.getId());

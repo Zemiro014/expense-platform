@@ -1,5 +1,6 @@
 package com.jeronimo.document_extraction_service.infrastructure.kafka.config;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jeronimo.document_extraction_service.domain.event.ReceiptDocumentExtractedEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -16,7 +17,7 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
     @Bean
-    public ProducerFactory<String, String> receiptDocumentExtractedProducerFactory(
+    public ProducerFactory<String, JsonNode> receiptDocumentExtractedProducerFactory(
             KafkaProperties kafkaProperties
     ) {
         Map<String, Object> props = kafkaProperties.buildProducerProperties();
@@ -31,10 +32,10 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, String> receiptDocumentExtractedKafkaTemplate(
-            ProducerFactory<String, String> producerFactory
+    public KafkaTemplate<String, JsonNode> receiptDocumentExtractedKafkaTemplate(
+            ProducerFactory<String, JsonNode> producerFactory
     ) {
-        KafkaTemplate<String, String> kafkaTemplate =
+        KafkaTemplate<String, JsonNode> kafkaTemplate =
                 new KafkaTemplate<>(producerFactory);
 
         kafkaTemplate.setObservationEnabled(true);

@@ -1,9 +1,13 @@
 package com.jeronimo.document_extraction_service.infrastructure.persistence.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.jeronimo.document_extraction_service.domain.event.OutboxStatus;
+import com.jeronimo.document_extraction_service.domain.event.ReceiptDocumentExtractedEvent;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -28,8 +32,9 @@ public class OutboxEventEntity {
     @Column(nullable = false)
     private String topic;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String payload;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private JsonNode documentExtractedEvent;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

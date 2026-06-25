@@ -2,6 +2,7 @@ package com.jeronimo.document_extraction_service.application.usecase;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.jeronimo.document_extraction_service.domain.event.OutboxEvent;
 import com.jeronimo.document_extraction_service.domain.event.ReceiptDocumentExtractedEvent;
 import com.jeronimo.document_extraction_service.domain.model.StoredFile;
@@ -149,25 +150,17 @@ public class UploadReceiptFileUseCase {
 
     private OutboxEvent buildOutboxEvent(
             StoredFile file,
-            ReceiptDocumentExtractedEvent event
+            ReceiptDocumentExtractedEvent documentExtractedEvent
     ) {
+        objectMapper.registerModule(new JavaTimeModule());
+
         return OutboxEvent.create(
             file.getId(),
             AGGREGATE_TYPE,
             EVENT_TYPE,
             receiptDocumentExtractedTopic,
-            serializeEvent(event)
+            objectMapper.valueToTree(documentExtractedEvent)
         );
-    }
-
-    private String serializeEvent(
-            ReceiptDocumentExtractedEvent event
-    ) {
-        try {
-            return objectMapper.writeValueAsString(event);
-        } catch (JsonProcessingException ex) {
-            throw new IllegalStateException("Failed to serialize receipt document extracted event", ex);
-        }
     }
 
     private String safeMessage(Exception ex) {

@@ -15,10 +15,7 @@ public class StoredFile {
         Map.of(
             FileStatus.UPLOADED, Set.of(FileStatus.STORED),
             FileStatus.STORED, Set.of(FileStatus.OCR_PROCESSING),
-            FileStatus.OCR_PROCESSING, Set.of(
-                    FileStatus.TEXT_EXTRACTED,
-                    FileStatus.OCR_FAILED
-            ),
+            FileStatus.OCR_PROCESSING, Set.of(FileStatus.TEXT_EXTRACTED, FileStatus.OCR_FAILED),
             FileStatus.TEXT_EXTRACTED, Set.of(),
             FileStatus.OCR_FAILED, Set.of()
         );
@@ -33,7 +30,7 @@ public class StoredFile {
     private String extractedText;
     private String errorMessage;
     @Builder.Default
-    private List<StoredFileEvent> events = new ArrayList<>();
+    private List<StoredFileEvent> documentExtractionHistoryProcess = new ArrayList<>();
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -56,10 +53,10 @@ public class StoredFile {
             .status(FileStatus.UPLOADED)
             .createdAt(now)
             .updatedAt(now)
-            .events(new ArrayList<>())
+            .documentExtractionHistoryProcess(new ArrayList<>())
             .build();
 
-        file.events.add(
+        file.documentExtractionHistoryProcess.add(
             StoredFileEvent.create(
                 FileStatus.UPLOADED,
                 Map.of(
@@ -102,7 +99,7 @@ public class StoredFile {
         this.status = nextStatus;
         this.updatedAt = LocalDateTime.now();
 
-        this.events.add(StoredFileEvent.create(nextStatus, payload == null ? Map.of() : payload));
+        this.documentExtractionHistoryProcess.add(StoredFileEvent.create(nextStatus, payload == null ? Map.of() : payload));
     }
 
     private void validateTransition(FileStatus currentStatus, FileStatus nextStatus) {

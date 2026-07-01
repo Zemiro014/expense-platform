@@ -1,7 +1,5 @@
 package com.jeronimo.document_extraction_service.infrastructure.kafka.config;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jeronimo.document_extraction_service.domain.event.ReceiptDocumentExtractedEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -15,11 +13,11 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import java.util.Map;
 
 @Configuration
-public class KafkaProducerConfig {
+public class KafkaRetryTopicConfig {
     @Bean
-    public ProducerFactory<String, JsonNode> receiptDocumentExtractedProducerFactory(
+    public ProducerFactory<Object, Object> retryProducerFactory(
             KafkaProperties kafkaProperties
-    ) {
+    ){
         Map<String, Object> props = kafkaProperties.buildProducerProperties();
 
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -32,14 +30,9 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, JsonNode> receiptDocumentExtractedKafkaTemplate(
-            ProducerFactory<String, JsonNode> producerFactory
-    ) {
-        KafkaTemplate<String, JsonNode> kafkaTemplate =
-                new KafkaTemplate<>(producerFactory);
-
-        kafkaTemplate.setObservationEnabled(true);
-
-        return kafkaTemplate;
+    public KafkaTemplate<Object, Object> retryKafkaTemplate(
+            ProducerFactory<Object, Object> retryProducerFactory
+    ){
+        return new KafkaTemplate<>(retryProducerFactory);
     }
 }
